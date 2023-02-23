@@ -1,0 +1,44 @@
+Aggregate function for excel:
+1. average formula 
+=average(num1,num2) then press enter
+ex: when we take number dynamically
+=average(200,100,50)  then press enter
+ 
+when we take number from row or sheet
+=average(select row values) then press enter
+20		
+54
+78
+45
+65
+---
+
+
+2. SUM FUNCTION()
+=SUM(20+560+60+56+45)
+=SUM(select row values) then enter
+=100+2300+6540
+
+3. SUMIF(Range,criteria,[sum range])
+where range = group wise
+criteria =where we put value in box
+sum range =all salary
+
+syntax
+  =sumif(one column of emp/dept, select fix box, salary col all values)
+
+
+4. COUNT() :
+=count(values)
+it will total count basically integer value but not count string value.
+
+5. COUNTA():
+it will return total count with integer and string.
+=Counta(values)
+
+6. COUNTBLANK()
+It will only count blank record from row / col.
+
+7. Countif ()
+this is work like group by class
+it will count in group  

@@ -1,0 +1,436 @@
+select * into temp from employees where 1 = 2;
+select top 50 percent * from employees;
+select * from emplooyees e where not exist(select department_id from departments d where e.employee_id = d.employee_id);
+
+
+
+
+we need to
+verify each attribute value is populated inside into 
+walk through/ report completeness.
+select *,loc.city,dp.department_name ,concat(first_name,' ',last_name)as full_name,
+case when salary <=20000 then 'Low'
+     when salary > 20000 and salary <=60000 then 'AVG'
+     when salary >60000 then 'GOOD' end as Salary_ind,
+datediff(yyyy,emp_hire,getdate())as experience_year,
+case when job_id like 'SA%' then 'Sales'
+	when job_id like 'SA%' then 'Other' end as sales_indicator
+from employees e join departments dp on e.department_id = dp.department_id
+ join locations loc on dp.location_id = loc.location_id
+
+select e.first_name , d.department_name ,loc.city , c.country_name, 
+ from employees e join departments d on e.department_id = d.department_id
+join locations loc on d.location_id = loc.location_id join countries c on loc.country_id = c.country_id
+join 
+
+
+
+
+
+
+
+
+
+
+
+select e.first_name,max(m.salary)over(partition by m.salary order by m.salary desc) as maxsal from employees e join
+employees m on e.manager_id = m.manager_id and m.salary > e.salary
+
+select e.firs_name,m.salary from(
+select *,dense_rank()over(partition by m.salary order by m.salary desc) as maxsal fromm employees e join employees m
+on e.manager_id = m.manager_id and m.salary > e.salary) Test 
+
+select substring(email,charindex('@',email,1)+1,len(email)) as domain,count(*) from employees group by 
+substring(email,charindex('@',email,1)+1,len(email))
+
+select first_name,substring(email,charindex('@',email,1)+1,len(email)) as domain,count(*)
+over(partition by substring(email,charindex('@',email,1)+1,len(email))) as count_domain from employees
+
+select first_name,year(hire_Date) from employees where year(hire_Date) = '1993'
+select first_name,month(hire_date) from employees where month(hire_date)='06'
+select first_name,datepart(mm,hire_Date) as months from employees where datepart(mm,hire_date)=6
+---(D). can you diplay count of employees who joined in Year wise and month wise ?
+select first_name year(hire_date) ,count(*)over(partition by year(hire_Date) order by year(hire_Date)desc) as years,
+	 month(hire_date),count(*)over(partition by month(hire_date order by month(hire_Date) desc) as months
+ from  employees
+select max(salary) from employees where salary <(select max(salary) from employees)
+select * from (
+select *,dense_Rank()over(partition by salary order by salary desc) as maxsal from employees) test where maxsal=3
+
+select d.department_name,max(salary) from employees e join departments d on e.employee_id = d.employee_id
+group by d.department_name
+
+select * from(select *,dense_rank()over(partition by d.department_name order by e.salary)as sal from employees e join departments d
+on e.department_id = d.department_id) test where sal = 1
+
+select pname,sum(sales_amount)as sales from products group by pname
+select ename,max(id) from employee group by ename
+select * from (
+select *,row_number()over(partition by ename order by esalary)as sal from employee) tst where sal =1
+
+select top 1 * from(
+select d.department_name,count(*) as countd from employees e join departments d on e.depatment_id = d.department_id group by d.department_id
+order by countd desc) from test
+
+select * ,(case when value > 0 then value else Null end) as possitive,
+		(case when value < 0 then value else Null end) as negative,
+		(case when value = 0 then value else Null end) as zero
+from number;
+
+select sum(case when value > 0 then value end)as possitive,
+	 sum(case when value < 0 then value end) as negative,
+	 sum(case when value = 0 then value end)as zero
+from number
+
+select * into test from number
+select * into test from number where 1 = 0
+
+insert into test select * from number
+
+select count(*)-count(phone_number) from employees;
+
+select e.first_name, d.department_name from employees e join departments d on e.department_id = d.department_id
+select e.first_name, d.department_name, l.city from employees e join departments d on e.department_id = d.department_id
+join locations l on d.location_id = l.location_id
+
+select e.first_name, d.department_name, l.city, c.country_name,r.regions_name from employees e join departments d
+on e.department_id = d.department_id join d.location_id = l.location_id join l.country_id = c.country_id join
+c.region_id = r.region_id
+
+rajpatle@gmail.com
+
+select substring('rajpatle@gmail.com',1,charindex('@','rajpatle@gmail.com')-1) as firstid,
+	substring('rajpatle@gmail.com',charindex('@','rajpatle@gmail.com')+1,len('rajpatle@gmail.com'))
+
+select e.first_name, case when e.phone_numer is null then m.phone_number else e.phone_numer
+end as phone_number
+from employees e ,employees m where e.manager_id = m.department_id
+
+select e.first_name,m.salary from employees e ,employees m on e.
+
+
+
+
+
+
+create procedure spemp
+as
+begin
+select * from employee
+end
+
+create proc spemp
+as
+begin
+select * from employee where eid = 11
+end
+
+execute spemp
+spemp
+exec spemp
+
+create procedute spemp
+as
+begin
+
+create proc spemployee
+as
+begin
+select * from employee
+end
+
+exec spemployee
+
+alter proc spemployee
+as 
+begin
+select * from employee where eid =11
+end
+
+alter proc spemployee
+@cust_name varchar(50)
+@gender varchar(50) 
+as
+begin
+select * from employee where cust_name = @cust_name
+select * from employee where gender = @gender
+end;
+
+exec spemployee
+
+create proc spadd
+@num1 int,
+@num2 int,
+@result int output
+as
+begin
+	set @result = @num1+@num2
+end
+
+declare @addition int
+exec spadd, 12,3, @addition output
+select @addition
+
+
+
+
+
+select department,count(department)as numdept,count(employee_name)as numemp from employee group by department
+6.Display the department numbers and total salary for each department
+select department,count(department)as deptno ,sum(salary) as totalsal from employee group by department
+select department,salary,count(department)over(partition by department),sum(Salary)over(partition by department) from employee
+7.Display the department numbers and total maximum salary for each department
+select department,count(department) as deptno,max(Salary) as maxsal from employee group by department
+select deparment,salary,count(department)over(partition by department),max(Salary)over(partition by department) from employee
+8.Display the department numbers and total salary for each department whose employee count is more than 2.
+select department,count(*),sum(salary) from employee group by department having count(*)>=2
+
+9.Display the names of HR whos earn a salary more than highest salary of Finance department.
+select employee_name,department,salary from employee where department = 'HR' and salary> (select max(salary) from employee where department = 'Finance')
+
+select department()
+
+13.Display the department having total salary greater than the maximum salary for managers.
+select department,sum(salary) from employee group by department having(sum(salary))>(select max(Salary) from employee where department = 'managers')
+14.Display the employess last or bottom 5 records.
+select top 5* from employee order by eid desc
+15.Display the employess whose employee ID is even.
+select * from employee where eid%2==0
+17.How to find '_' within two names (for ex: name like Praveen_Patil)
+select substring('Praveen_Patil',charindex('_','Praveen_Patil'),1) 
+select len(rajendra)
+select len(*) from employee
+5.select the name of employee and employee id in a single column.
+select concat(employee_name,'',eid) from employee
+6.Use appropriate function and extract 3 charecters starting from charecters from the following string 'SCODEEN' ie O/P should be SCO.
+select substring('SCODEEN',1,3)
+7.Find the first occurance of  charecter 'E'the following string "SCODEEN GLOBAL".
+select substring('SCODEEN GLOBAL',charindex('e','SCODEEN GLOBAL'),1)
+8.Replace every occurance of alphabet F with E in the following string "SCODFFN GLOBAL".
+select replace('SCODFFN GLOBAL','F','e')
+9.Display the information from employee table where name found "MANAGER" replace with "BOSS".
+select *,replace(department,'manager','BOSS') from employee
+10.Display your age in days?
+select datediff(dd,'1993-10-15',getdate())
+11.display your age in months?
+select datediff(mm,'1993-10-15',getdate())
+12.Display current date as 15th AUG 1990.
+select convert(varchar(50),getdate(),106)
+15.Display the date before three months current date.
+select dataadd(mm,-3,getdate())
+18.Display those employeess whose salary is greater than 3000 after giving 25% increment.
+select employee_name,salary from employee where salary > 3000 and salary = salary+(salary*25/100)
+19.Select count of employess from each department where count greater than 3.
+select department,count(*) as empcount from employee group by department having count(*)>3
+select datename(mm,getdate())
+select into test from employee
+
+21.How we can insert selective records from one table into another table?
+insert into test select * from dept where dept_id = 30
+23.How to change or rename the column name in a table?
+sp_rename 'employee.department','dept'
+
+
+select * from customer c join salesman s on c.city=s.city
+(id int foreign key references department(id))
+
+select salesman_id,name,city,'%',commission*100 fromm salesman
+select 'for',ord_date, 'there are',over(partition by ord_date) as count, 'orders' from orders
+select * from orders order by ord_no
+select cust_name,city,grade from customerele order by customer_id
+select salesman_id,ord_date, max(purch_amt) from orders group by salesman_id,ord_date order by salesman_id,ord_date
+select cust_name,city,grade from customer order by ord_no desc
+select cust_id, count(distinct(ord_no)),max(purch_amt) from orders group by cust_id order by 2 desc
+select ord_date,sum(purch_amt),sum(purch_amt*15/100)as commission from orders order by ord_date
+select ord_date,sum(purch_amt),sum(purch_amt)*.15
+
+select sum(purchase_amt) from orders
+select avg(purchase_amt) from orders
+select count(distinct(salesman_id)) from orders
+select count(cust_name) from customer
+select count(grade) from customer
+select max(purch_amt) from orders
+select city,max(grade) from customer group by city
+select customer_id,max(purch_amt) from orders group by custormer_id
+order by customer_id
+select customer_id,order_date,max(purch_amt) from orders group by customer_id,order_date order by customer_id
+
+select salesman_id,max(purch_amt) from orders where ord_date='2012-08-17' group by salesman_id
+select customer_id,ord_date,max(purch_amt) from orders group by customer_id,ord_date having max(purch_amt)>2000.00
+select customer_id,ord_date,max(purch_amt) from orders group by customer_id,order_date having max(purch-amt) between 2000 and 6000;
+select customer_id,ord_date,max(purch_amt) from orders group by customer_id,ord_date
+ having max(purch_amt) in (2000,3000,5760,6000)
+select customer_id,max(purch_amt) from orders where customer_id between 3002 and 3007 group by customer_id;
+select customer_id,max(purch_amt) from orders where customer_id between 3002 and 3007 group by customer_id having
+max(purch_amt) > 1000
+select salesman_id,max(purch_amt) from orders where saleman_id between 5003 and 5008 group by salesman_id
+select count(ord_no) from orders where ord_Date='2012-08-17'
+select count(salesman_id) from salesmna where city is not null
+
+select * ,salary=(salary+salary*5/100) from employee;
+select * from employee where employee_name like 'a%' and len(employee_name)>=4
+select * from employee e,employee e1 where e.eid<>e1.eid and e.salary=e1.salary
+select * from employee where salary >(select salary from employee where designation='manager')
+
+select * from employee where name like '[AEIOU]%'
+select * ,salary=salary+salary*5/100 from employee
+find number of employees working is department 'ABC';
+select count(*) from employee where department='abc'
+find details of employees whose first_name end with 'a' and cotains 6 alphabets.
+select * from employee where employee_name like '%a' and len(employee_name)=6
+--Q13. write an SQL query to fetch the count of employees working in project 'p1';
+select count(*) from employee where project='p1'
+--Q14. write an SQL query to find the maximum ,minimum and average salary of the employees?
+select max(Salary),min(salary),avg(Salary) from employee
+select *from employee where commission is null
+select employee_id,fname,salary from employee order by salary desc;
+select department,count(*) from employee group by department
+select * from employee where salary in(select max(salary) from employee)
+with cte as
+(select *,row_number()over(partition by id order by id) as dup from tempdup)
+delete cte where dup>1
+
+delete from (select *,row_number()over(partition by ename order by ename) as dup from duplicate_record) as deldup 
+where dup >1
+
+--Q28. create a table from existing table (only structure without data)?
+select * into tempdata from employee where 1=0;
+select * from employee where id%2=0
+select distinct(salary) from employee
+create view tempview
+as
+select * from employee
+
+sp_helptext tempview
+
+alter table employee add pincode int
+sp_refreshview tempview
+
+	
+
+16.Display the department which are unique in department column.
+select distinct(department) from employee
+
+18.Display those employeess whose salary is greater than 3000 after giving 25% increment.
+select * ,(salary+salary*25/100) as sal from employee where sal >3000
+select department,count(*) from employee group by department having count(*)>3
+
+13.Display the department having total salary greater than the maximum salary for managers.
+select max(salary) from employee
+15.Display the employess whose employee ID is even.
+select * from employee where empid%2=0
+How to find '_' within two names (for ex: name like Praveen_Patil)
+select * ,substring(employee_name,charindex('_',employee_name),1)from employee
+8.Replace every occurance of alphabet F with E in the following string "SCODFFN GLOBAL".
+select replace('scodffn global','ff','e')
+9.Display the information from employee table where name found "MANAGER" replace with "BOSS".
+select *,replace(department,'manager','boss') from employee
+select datediff(dd,'1993-10-15',getdate())
+12.Display current date as 15th AUG 1990.
+select replace(getdate(),cast('1990-08-15' as varchar))
+5.Display the employee name and annual salary for all the employess.
+select * from employee_name ,salary=salary*12 from employee
+6.Display the employee names of all employess who are working in HR department.
+select employee_name from employee where department='hr'
+7.Display the employee names of all employess who are working in HR department and salary is greater than 2000.
+select employee_name,department,salary from employee where department='hr'and salary >2000
+8.Display the employee number who are earning same salary.
+select * from employee e1,employee e2 where e1.salary=e2.salary and e1.employee_name<>e2.employee_name
+9.Display the names of employess whos are working in organization for the past 5 years.
+select * from datejoin where datediff(yy,joindate,getdate())=5
+10.Display the list of employess who have joined the company before 30-01-2020 after 30-07-2020?
+select * from datejoin where joindate not between
+12.Display all the tables name from database?
+select * from information_schema.tables
+13.Display the employess whos name start with alphabet 'S'.
+select * from employee where employee_name like 's%'
+15.Display the employess whose names have second alphabet 'R' in their names.
+select * from employee where employee_name like '_r%
+16.Select the names of the employee whose names is exactly five charecter of length.
+select * from employee where len(employee_name)=5;
+
+--set-2-----
+
+1.Display the names of the employee in order of salary i.e. the name of employee earning lowest salary should be first. 
+select * from employee order by salary 
+
+3.Display the name of the employee along with their annual salary (salary*12). The name of the employee earning
+ highest annual salary should appear first.
+select employee_name,salary=salary*12 from employee order by salary desc;
+4.Display the names,salary,HRA,PF,DA,Total Salary for each employeer.
+  The output should be in the order of total salary,HRA 15% salary,
+DA 10% salary, PF 5% of salary, total salary will be (salary+HRA+DA)-PF
+select employee_name,salary,(salary*15/100)as HRA,(salary*5/100)PF,(salary*10/100) as DA, 
+(salary+salary*5/100+salary*10/100+salary*15/100)as Total from employee order by total
+
+5.Display the department numbers and total number of employees working in each department.
+select department,count(*) from employee group by department
+
+8.Display the department numbers and total salary for each department whose employee count is more than 2.
+select department,sum(salary),count(employee_name) from employee group by department having count(employee_name)>=2
+9.Display the names of HR whos earn a salary more than highest salary of Finance department.
+select employee_name,department from employee where department='hr' and salary>
+(select salary from employee where department ='finance')
+
+10.Display the name of employess who earn highest salary in their respective department?
+
+
+
+select employee_name ,max(salary) from employee group by employee_name
+
+age = 18
+if (age >=16)
+print('You are eligible for apply learning license')
+if(age <=18 or age >=60)
+print('You are eligible for permanent license')
+else:
+print('You are out of age')
+else:
+print('You are not eligible for learning as well as permanent license')
+
+select employee_name,len(employee_name) from employee;
+select count_column(*) from information_schema.column where table_name='employee';
+select * from information_schema.tables where table_type='base table';
+select table_type,count(*) from information_schema.tables group by table_type;
+select * from information_schema.columns where table_name='employee'
+select count(*) from information_schema.columns where table_name='employee';
+select count(*) from information_schema.columns where table_name='employee';
+select table_name,count(*) from information_schema.columns where table_name='employee'
+select * from information_schema.columns where table_name='employee'
+select count(*) from information_schema.columns where table_name='employee'
+select * from information_schema.table_constraint where table_name='employee'
+select table_name,count(*) from information_schema.columns group by table_name
+5.select the name of employee and employee id in a single column.
+select concat(employee_name,'_',eid)from employee
+
+7.Find the first occurance of  charecter 'E'the following string "SCODEEN GLOBAL".
+select substring('SCODEEN GLOBAL',CHARINDEX('E','SCODEEN GLOBAL'),1)
+
+select * from table5 join table6 on table5.col1 = table6.col1 where table6.col1 is null
+select (case when value > 0 then value end) as possiitive,
+	 (case when value < 0 then value end)as negative, from number;
+
+select count(*)-count(phone_number) from employees ;
+select email,left(email,charindex('@',email)-1) as first_name, right(email,len(email)-charindex())
+ 
+select case when e.phone_number is null then m.phone_number else e.phone_number from employees e, employees m 
+where e.manager_id = m.employee_id
+
+select e.firt_name from emmployees e join employees m on e.manager_id = m.employee_id and e.salary > m.salary;
+select e.first_name,m.first_name fromm employees e join employees m on e.manager_id = m.employee_id
+select * from
+(select *,dense_rank()over(partition by gender order by salary desc) as maxsal from employeedetails) test where maxsal = 1
+
+select first_name,count(*)over(partition by substring(email,charindex('@',email)+1,len(email))as email from employees
+
+select * from student_mark where roll_no in (select roll_no from student where student_name in ('Anil') AND city = 'Delhi')
+select * from student_mark m join student s on m.roll_no = s.roll_no where s.student_name='anil' and s.city = 'delhi'
+select * from student_marks where roll_no in 
+(select roll_no from student where city = 'noida')
+--q. display customer name whose store name is santa Cruz Bikeswith
+select first_name from sales.customers where customer_id in
+ (select store_id from sales.store where store_name = 'santa cruz bikeswith')
+
+inset into employee values()
+insert into employee()values()
+

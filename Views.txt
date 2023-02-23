@@ -1,0 +1,221 @@
+-: VIEW IN SQL SERVER :-
+============================
+Q. WHAT IS VIEW?
+-> A View in SQL is just a saved SQL Query.
+-> A view can also be considered as virtual table.
+-> A view does not contain any data
+-> The fields in view as fields from one or more table in the database
+-> You can add SQL functions, WHERE and JOIN statement to view and present the data as if the data were coming from one single table.
+--------------------------------------------------------------------
+Q. How to create VIEW?
+It can be create by DDL statement.
+A view can be created for one or multiple table.
+
+SYNTAX: CREATE VIEW < VIEWNAME >
+	AS
+ 	<QUERY>
+
+EX.	create view empview
+	as
+	select * from employee
+-----------------------------------------------------------------
+Q. How to create view for multiple table 
+ANS:
+	create view multiview
+	as
+	select * from employee E JOIN department D ON E.dept_id = D.dept_id
+
+	select * from multiview;
+
+-----------------------------------------------------------------
+Q. How to retriew or fetch view ?
+we have already created view with name of ' empview ' as mentioned above.
+so now we have to write simple query for view
+
+[ Select * from empview ]
+
+--------------------------------------------------------------
+Q. HOW to see / check defination of view or script of view ?
+If we want to see script of view then we have to use following syntax
+
+SYNTANX: Exec Sp_helptext < viewname >
+
+example:  exec sp_helptext empview;
+
+--------------------------------------------------------------
+Q. How to update the metadata of a SQL VIEW ?
+Suppose we add one another column into employee table that will contain NULL values
+and then if we execute to VIEW which is already created 
+then new added column will not reflect in view
+
+follow step for understand
+step 1: for check employee table data
+Select * from employee ;
+
+step 2: now we create view
+create view metaview
+as
+select * from employee ;
+
+step 3: lets check to view, now all data from employee table will display into view
+select * from metaview;
+
+step 4: now we add one column into main table
+ALTER table employee add pincode INT ;
+
+so new added column will display into employee table but in VIEW it will not reflect,
+thats why we need to refresh VIEW 
+
+step 5: Refresh to created view using this statement
+
+Exec Sp_refreshview metaview ;
+
+step 6: now execute to view and see new added column will be display.
+Select * from metaview ;
+
+----------------------------------------------------------
+Q. HOW TO CREATE SCHEMA BINDING IN SQL VIEW/ How to create secure columns by using view ?
+Once we create SCHEMA BINDING to column in view then we can not drop or delete one or more column from main table
+also you can not ALTER any column .
+
+SYNTAX:  Create view < view_name >
+	 With schemabinding
+	 as
+	< here write query and select which column you does not want to delete>
+
+example:  create view schemabindview
+	  With schemabinding
+	  as
+	  select * from dbo.employee;
+		
+			OR
+	create view schemabindview
+	WITH SCHEMABINDING
+	as
+	select emp_name,emp_city, emp_department from DBO.Employee;
+
+	select * from schemabindview ;
+
+now if you delete any one column from main table and then it will show error.
+
+	alter table employee drop column city;
+
+If you change column name then it will also display error
+
+	SP_RENAME 'employee.city','employee.city_name' ;
+
+-------------------------------------------------------------------
+Q. WHY TO USE VIEW?
+
+HIDE THE COMPLEXITY OF QUERY
+-> COLUMN LEVEL SECURITY
+-> ROW LEVEL SECURITY
+ANS:
+Suppose we have a complex query and we don't want to write this complex query again and again 
+then we will create view for easily access this query.
+
+ROW LEVEL SECURITY:- using this query user only can access data which emp_id is greater than proving condition
+
+	create view rowview
+	as
+	select * from employee where emp_id > 5;
+
+COLUMN LEVEL SECURITY:- Using this we can hide column and display those column which we want into view
+
+	create view colview
+	as
+	select emp_name , emp_city , emp_department from employee ; 
+
+	select * from colview ;
+
+----------------------------------------------------------------------
+		APPLY VIEW ON DML STATEMENT
+		===========================
+There are few conditions for DML commands in VIEW: 
+
+		1. we can use DML operation on a single table only
+		2. View should not contain GROUP BY, HAVING ,DISTINCT CLAUSES
+		3. We can not use a SUBQUERY in a VIEW in SQL SERVER.
+		4. We can not SET operations in a SQL VIEW.
+
+1. INSERT INTO VIEW: we will insert data into view 
+	
+	Create view insertview
+	as
+	select * from employee;
+	
+	select * from insertview;
+
+	Insert into insertview (emp_name, emp_city,emp_department) values ('Durgesh','Nagpur','IT');
+
+now data has been inserted into view as well as main table.
+
+2. DELETE FROM VIEW:
+we have already create a view so
+
+query:-   Delete from insertview where emp_id=5;
+
+lets check to view and main table data whether delete operation is successfull or not
+
+	select * from employee;
+	select * from insertview;
+
+3. UPDATING VIEW:-
+	Suppose we want to update data/record into table with view then we can do using DML stm.
+   (Note: i'm taking same view which is create for insert data)
+
+		update insertview set city='Nagpur' where emp_id=10;
+
+(Now i will compare both table data)
+	select * from employee;
+	select * from insertview;
+
+-------------------------------------------------------------------------
+
+			CREATE VIEW ' WITH CHECK OPTION '
+			=================================
+The WITH CHECK CLAUSE is used to prevent the insertion of rows in the view 
+where the condition in the WHERE CLAUSE in create view stm is not satisfied.
+when we give a condition and if condition is satisfied then data will inserted otherwise it will show error.
+It is just like a security.
+
+example: 	Create view checkviewoptionn
+		as
+		select * from employee where city='Pune';
+		WITH CHECK OPTION;
+
+	SELECT * FROM checkviewoption ; 
+now if insert data through view and insert other city name which is different from given conditon then it will show error, lets check it
+
+	Insert into checkviewoption (emp_name, emp_department, emp_city) values ('Rohit','Manager','Nagpur');   ----it will display error 
+	Insert into checkviewoption (emp_name, emp_department, emp_city) values ('Rohit','Manager','Pune');     -----this data will insert because here city condition is satisfied.
+
+
+----------------------------------------------------------------------------------------
+Q. HOW TO RENAME A VIEW ?
+syntax:	  sp_rename 'old_name','new_name';
+example:  sp_rename 'viewemp','viewemp1';
+
+-------------------------------------------------
+FOR ALTER VIEW:
+suppose we create a view like
+
+	Create view alterview
+	as
+	select * from employee;
+
+now i want only specific column in that view ,so in this condition we will ALTER to view.
+
+	ALTER view atlerview
+	as
+	select emp_name, emp_city, emp_department from employee;
+
+	select * from alterview;
+
+---------------------------------------------------
+Q. HOW TO DROP VIEW
+Syntax:    Drop view <view_name>;
+
+example:   Drop view alterview;
+
+
